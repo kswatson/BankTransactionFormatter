@@ -57,11 +57,13 @@ public class BankTransactionFormatterTest {
 		BankTransactionFormatter.main(args);
 
 		File outputFile = new File(TEST_PC_FINANCIAL_OUTPUT_FILE_NAME);
-
 		assertTrue(outputFile.exists());
-		List<String> lines = Files.readAllLines(outputFile.toPath());
 
-		assertEquals(BankTransactionFormatter.PC_FINANCIAL_HEADER, lines.get(0));
+		File inputFile = new File(TEST_PC_FINANCIAL_INPUT_FILE_NAME);
+		List<String> inputLines = Files.readAllLines(inputFile.toPath());
+
+		List<String> lines = Files.readAllLines(outputFile.toPath());
+		assertEquals(inputLines.get(0), lines.get(0));
 	}
 
 	@Test

@@ -8,7 +8,7 @@ import java.util.List;
 
 public class BankTransactionFormatter {
 
-	public static final String PC_FINANCIAL_HEADER = "Date,Transaction Details,Funds Out,Funds In";
+	public static final String PC_FINANCIAL_HEADER = "Date, Transaction Details, Funds Out, Funds In ";
 
 	public static void main(String[] args) throws IOException {
 
