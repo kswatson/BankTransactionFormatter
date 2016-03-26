@@ -65,6 +65,20 @@ public class BankTransactionFormatterTest {
 	}
 
 	@Test
+	public void bankTransactionFormatterShouldReturnPcFinancialTransactionDate() throws IOException {
+		String[] args = new String[] { TEST_PC_FINANCIAL_INPUT_FILE_NAME };
+		BankTransactionFormatter.main(args);
+
+		File outputFile = new File(TEST_PC_FINANCIAL_OUTPUT_FILE_NAME);
+
+		assertTrue(outputFile.exists());
+		List<String> lines = Files.readAllLines(outputFile.toPath());
+
+		assertEquals(BankTransactionFormatter.PC_FINANCIAL_HEADER, lines.get(0));
+		assertEquals("02/01/2016", lines.get(1));
+	}
+
+	@Test
 	public void bankTransactionFormatterShouldReturnFileNamedAfterInputFileWithAnyName() throws IOException {
 		String[] args = new String[] { TEST_INPUT_FILE_NAME_2 };
 		BankTransactionFormatter.main(args);

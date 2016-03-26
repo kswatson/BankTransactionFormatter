@@ -20,6 +20,7 @@ public class BankTransactionFormatter {
 
 		List<String> lines = new ArrayList<String>();
 		lines.add(PC_FINANCIAL_HEADER);
+		lines.add("02/01/2016");
 		Files.write(output.toPath(), lines);
 
 	}
