@@ -9,13 +9,26 @@ import java.util.List;
 public class BankTransactionFormatter {
 
 	public static void main(String[] args) throws IOException {
-		File output = new File("output.csv");
 
+		String inputFileName = args[0];
+		String outputFileName = createOutputFileName(inputFileName);
+
+		File output = new File(outputFileName);
 		output.createNewFile();
+
 		List<String> lines = new ArrayList<String>();
 		lines.add("Hello,World");
 		Files.write(output.toPath(), lines);
 
+	}
+
+	private static String createOutputFileName(String inputFileName) {
+		String extension = ".csv";
+		String suffix = "_formatted";
+		String prefix = inputFileName.substring(0, inputFileName.lastIndexOf(extension));
+
+		String outputFileName = prefix + suffix + extension;
+		return outputFileName;
 	}
 
 }
