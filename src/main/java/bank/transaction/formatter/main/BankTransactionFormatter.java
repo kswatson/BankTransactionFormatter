@@ -9,22 +9,31 @@ public class BankTransactionFormatter {
 
 	public static void main(String[] args) throws IOException {
 		String inputFileName = args[0];
-		File input = new File(inputFileName);
-		List<String> inputLines = Files.readAllLines(input.toPath());
+		List<String> inputLines = getLinesFromFileNamed(inputFileName);
 
-		String outputFileName = createOutputFileName(inputFileName);
-		File output = new File(outputFileName);
-		output.createNewFile();
+		File outputFile = createOutputFile(inputFileName);
 
-		Files.write(output.toPath(), inputLines);
+		Files.write(outputFile.toPath(), inputLines);
 	}
 
-	private static String createOutputFileName(String inputFileName) {
+	private static File createOutputFile(String inputFileName) throws IOException {
+		File outputFile = new File(buildOutputFileName(inputFileName));
+		outputFile.createNewFile();
+
+		return outputFile;
+	}
+
+	private static String buildOutputFileName(String inputFileName) {
 		String extension = ".csv";
 		String suffix = "_formatted";
 		String prefix = inputFileName.substring(0, inputFileName.lastIndexOf(extension));
 
-		String outputFileName = prefix + suffix + extension;
-		return outputFileName;
+		return prefix + suffix + extension;
+	}
+
+	private static List<String> getLinesFromFileNamed(String fileName) throws IOException {
+		File file = new File(fileName);
+		List<String> lines = Files.readAllLines(file.toPath());
+		return lines;
 	}
 }
