@@ -21,6 +21,7 @@ public class BankTransactionFormatter {
 		List<String> lines = new ArrayList<String>();
 		lines.add(PC_FINANCIAL_HEADER);
 		lines.add("02/01/2016, E-TRANSFER RECEIVE Michael Watson,,225.72");
+		lines.add("02/01/2016,POS MERCHANDISE FRESH BURGER,10.50,");
 		Files.write(output.toPath(), lines);
 
 	}

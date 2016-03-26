@@ -79,6 +79,7 @@ public class BankTransactionFormatterTest {
 		List<String> lines = Files.readAllLines(outputFile.toPath());
 
 		assertEquals("02/01/2016, E-TRANSFER RECEIVE Michael Watson,,225.72", lines.get(1));
+		assertEquals("02/01/2016,POS MERCHANDISE FRESH BURGER,10.50,", lines.get(2));
 	}
 
 	@Test
