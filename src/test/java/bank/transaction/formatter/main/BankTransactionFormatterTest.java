@@ -63,6 +63,8 @@ public class BankTransactionFormatterTest {
 		List<String> inputLines = Files.readAllLines(inputFile.toPath());
 
 		List<String> lines = Files.readAllLines(outputFile.toPath());
+
+		assertEquals(BankTransactionFormatter.PC_FINANCIAL_HEADER, lines.get(0));
 		assertEquals(inputLines.get(0), lines.get(0));
 	}
 
@@ -76,8 +78,18 @@ public class BankTransactionFormatterTest {
 		assertTrue(outputFile.exists());
 		List<String> lines = Files.readAllLines(outputFile.toPath());
 
-		assertEquals(BankTransactionFormatter.PC_FINANCIAL_HEADER, lines.get(0));
-		assertEquals("02/01/2016", lines.get(1));
+		assertTrue(lines.get(1).contains("02/01/2016"));
+	}
+
+	@Test
+	public void bankTransactionFormatterShouldReturnPcFinancialTransactionDetails() throws IOException {
+		String[] args = new String[] { TEST_PC_FINANCIAL_INPUT_FILE_NAME };
+
+		BankTransactionFormatter.main(args);
+
+		File outputFile = new File(TEST_PC_FINANCIAL_OUTPUT_FILE_NAME);
+		List<String> lines = Files.readAllLines(outputFile.toPath());
+		assertTrue(lines.get(1).contains("E-TRANSFER RECEIVE Michael Watson"));
 	}
 
 	@Test
