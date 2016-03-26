@@ -8,7 +8,6 @@ import java.util.List;
 public class BankTransactionFormatter {
 
 	public static void main(String[] args) throws IOException {
-
 		String inputFileName = args[0];
 		File input = new File(inputFileName);
 		List<String> inputLines = Files.readAllLines(input.toPath());
@@ -18,7 +17,6 @@ public class BankTransactionFormatter {
 		output.createNewFile();
 
 		Files.write(output.toPath(), inputLines);
-
 	}
 
 	private static String createOutputFileName(String inputFileName) {
@@ -29,5 +27,4 @@ public class BankTransactionFormatter {
 		String outputFileName = prefix + suffix + extension;
 		return outputFileName;
 	}
-
 }
