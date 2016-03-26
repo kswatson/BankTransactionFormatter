@@ -8,6 +8,8 @@ import java.util.List;
 
 public class BankTransactionFormatter {
 
+	public static final String PC_FINANCIAL_HEADER = "Date,Transaction Details,Funds Out,Funds In";
+
 	public static void main(String[] args) throws IOException {
 
 		String inputFileName = args[0];
@@ -17,7 +19,7 @@ public class BankTransactionFormatter {
 		output.createNewFile();
 
 		List<String> lines = new ArrayList<String>();
-		lines.add("Hello,World");
+		lines.add(PC_FINANCIAL_HEADER);
 		Files.write(output.toPath(), lines);
 
 	}

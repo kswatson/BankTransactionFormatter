@@ -1,5 +1,6 @@
 package bank.transaction.formatter.main;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -17,10 +18,14 @@ public class BankTransactionFormatterTest {
 	private static final String TEST_INPUT_FILE_NAME = "testInput.csv";
 	private static final String TEST_OUTPUT_FILE_NAME = "testInput_formatted.csv";
 
+	private static final String TEST_PC_FINANCIAL_INPUT_FILE_NAME = "PCF.csv";
+	private static final String TEST_PC_FINANCIAL_OUTPUT_FILE_NAME = "PCF_formatted.csv";
+
 	@Before
 	public void setup() {
 		deleteFileIfExists(TEST_OUTPUT_FILE_NAME);
 		deleteFileIfExists(TEST_OUTPUT_FILE_NAME_2);
+		deleteFileIfExists(TEST_PC_FINANCIAL_OUTPUT_FILE_NAME);
 	}
 
 	@Test
@@ -44,6 +49,19 @@ public class BankTransactionFormatterTest {
 		List<String> lines = Files.readAllLines(outputFile.toPath());
 
 		assertTrue(!lines.isEmpty());
+	}
+
+	@Test
+	public void bankTransactionFormatterShouldReturnPcFinancialTransactions() throws IOException {
+		String[] args = new String[] { TEST_PC_FINANCIAL_INPUT_FILE_NAME };
+		BankTransactionFormatter.main(args);
+
+		File outputFile = new File(TEST_PC_FINANCIAL_OUTPUT_FILE_NAME);
+
+		assertTrue(outputFile.exists());
+		List<String> lines = Files.readAllLines(outputFile.toPath());
+
+		assertEquals(BankTransactionFormatter.PC_FINANCIAL_HEADER, lines.get(0));
 	}
 
 	@Test
