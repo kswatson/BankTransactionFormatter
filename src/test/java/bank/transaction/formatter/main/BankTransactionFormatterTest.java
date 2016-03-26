@@ -13,94 +13,64 @@ import org.junit.Test;
 
 public class BankTransactionFormatterTest {
 
-	private static final String TEST_OUTPUT_FILE_NAME_2 = "testInput2_formatted.csv";
-	private static final String TEST_INPUT_FILE_NAME_2 = "testInput2.csv";
-	private static final String TEST_INPUT_FILE_NAME = "testInput.csv";
-	private static final String TEST_OUTPUT_FILE_NAME = "testInput_formatted.csv";
-
 	private static final String TEST_PC_FINANCIAL_INPUT_FILE_NAME = "PCF.csv";
+	private static final String TEST_INPUT_FILE_NAME_2 = "PCF_2.csv";
+
+	private static final String TEST_OUTPUT_FILE_NAME_2 = "PCF_2_formatted.csv";
 	private static final String TEST_PC_FINANCIAL_OUTPUT_FILE_NAME = "PCF_formatted.csv";
 
 	@Before
 	public void setup() {
-		deleteFileIfExists(TEST_OUTPUT_FILE_NAME);
-		deleteFileIfExists(TEST_OUTPUT_FILE_NAME_2);
 		deleteFileIfExists(TEST_PC_FINANCIAL_OUTPUT_FILE_NAME);
+		deleteFileIfExists(TEST_OUTPUT_FILE_NAME_2);
 	}
 
 	@Test
-	public void bankTransactionFormatterShouldReturnCsv() throws IOException {
-		String[] args = new String[] { TEST_INPUT_FILE_NAME };
+	public void bankTransactionFormatterShouldReturnFileNamedAfterInputFileWithAnyName() throws IOException {
+		String[] args = new String[] { TEST_INPUT_FILE_NAME_2 };
+
 		BankTransactionFormatter.main(args);
 
-		File outputFile = new File(TEST_OUTPUT_FILE_NAME);
-
+		File outputFile = new File(TEST_OUTPUT_FILE_NAME_2);
 		assertTrue(outputFile.exists());
 	}
 
 	@Test
 	public void bankTransactionFormatterShouldReturnCsvWithData() throws IOException {
-		String[] args = new String[] { TEST_INPUT_FILE_NAME };
+		String[] args = new String[] { TEST_PC_FINANCIAL_INPUT_FILE_NAME };
+
 		BankTransactionFormatter.main(args);
 
-		File outputFile = new File(TEST_OUTPUT_FILE_NAME);
-
+		File outputFile = new File(TEST_PC_FINANCIAL_OUTPUT_FILE_NAME);
 		assertTrue(outputFile.exists());
-		List<String> lines = Files.readAllLines(outputFile.toPath());
 
+		List<String> lines = Files.readAllLines(outputFile.toPath());
 		assertTrue(!lines.isEmpty());
 	}
 
 	@Test
 	public void bankTransactionFormatterShouldReturnPcFinancialTransactionHeader() throws IOException {
 		String[] args = new String[] { TEST_PC_FINANCIAL_INPUT_FILE_NAME };
+
 		BankTransactionFormatter.main(args);
 
-		File outputFile = new File(TEST_PC_FINANCIAL_OUTPUT_FILE_NAME);
-		assertTrue(outputFile.exists());
+		String expectedHeader = getLinesFromFileNamed(TEST_PC_FINANCIAL_INPUT_FILE_NAME).get(0);
+		String actualHeader = getLinesFromFileNamed(TEST_PC_FINANCIAL_OUTPUT_FILE_NAME).get(0);
 
-		File inputFile = new File(TEST_PC_FINANCIAL_INPUT_FILE_NAME);
-		List<String> inputLines = Files.readAllLines(inputFile.toPath());
-
-		List<String> lines = Files.readAllLines(outputFile.toPath());
-
-		assertEquals(BankTransactionFormatter.PC_FINANCIAL_HEADER, lines.get(0));
-		assertEquals(inputLines.get(0), lines.get(0));
+		assertEquals(expectedHeader, actualHeader);
 	}
 
 	@Test
 	public void bankTransactionFormatterShouldReturnPcFinancialTransactions() throws IOException {
 		String[] args = new String[] { TEST_PC_FINANCIAL_INPUT_FILE_NAME };
-		BankTransactionFormatter.main(args);
-
-		File outputFile = new File(TEST_PC_FINANCIAL_OUTPUT_FILE_NAME);
-
-		assertTrue(outputFile.exists());
-		List<String> lines = Files.readAllLines(outputFile.toPath());
-
-		assertEquals("02/01/2016, E-TRANSFER RECEIVE Michael Watson,,225.72", lines.get(1));
-		assertEquals("02/01/2016,POS MERCHANDISE FRESH BURGER,10.50,", lines.get(2));
-	}
-
-	@Test
-	public void bankTransactionFormatterShouldReturnPcFinancialTransactionDetails() throws IOException {
-		String[] args = new String[] { TEST_PC_FINANCIAL_INPUT_FILE_NAME };
 
 		BankTransactionFormatter.main(args);
 
-		File outputFile = new File(TEST_PC_FINANCIAL_OUTPUT_FILE_NAME);
-		List<String> lines = Files.readAllLines(outputFile.toPath());
-		assertTrue(lines.get(1).contains("E-TRANSFER RECEIVE Michael Watson"));
-	}
+		List<String> inputLines = getLinesFromFileNamed(TEST_PC_FINANCIAL_INPUT_FILE_NAME);
+		List<String> outputLines = getLinesFromFileNamed(TEST_PC_FINANCIAL_OUTPUT_FILE_NAME);
 
-	@Test
-	public void bankTransactionFormatterShouldReturnFileNamedAfterInputFileWithAnyName() throws IOException {
-		String[] args = new String[] { TEST_INPUT_FILE_NAME_2 };
-		BankTransactionFormatter.main(args);
-
-		File outputFile = new File(TEST_OUTPUT_FILE_NAME_2);
-
-		assertTrue(outputFile.exists());
+		assertEquals(inputLines.get(1), outputLines.get(1));
+		assertEquals(inputLines.get(2), outputLines.get(2));
 	}
 
 	private void deleteFileIfExists(String fileName) {
@@ -110,4 +80,9 @@ public class BankTransactionFormatterTest {
 		}
 	}
 
+	private List<String> getLinesFromFileNamed(String fileName) throws IOException {
+		File file = new File(fileName);
+		List<String> lines = Files.readAllLines(file.toPath());
+		return lines;
+	}
 }
