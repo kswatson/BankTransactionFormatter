@@ -3,7 +3,10 @@ package bank.transaction.formatter.main;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class BankTransactionFormatter {
 
@@ -11,9 +14,38 @@ public class BankTransactionFormatter {
 		String inputFileName = args[0];
 		List<String> inputLines = getLinesFromFileNamed(inputFileName);
 
-		File outputFile = createOutputFile(inputFileName);
+		String header = inputLines.get(0);
+		inputLines.remove(0);
 
-		Files.write(outputFile.toPath(), inputLines);
+		Map<String, BankTransaction> fundsOutMap = new HashMap<String, BankTransaction>();
+		for (String line : inputLines) {
+			String[] splitLine = line.split(",");
+			String date = splitLine[0].trim();
+			String transactionDetails = splitLine[1].trim();
+			String fundsIn = splitLine[2].trim();
+
+			double fundsOutSum = 0;
+			if (splitLine.length == 4) {
+				String fundsOut = splitLine[3].trim();
+
+				fundsOutSum = Double.parseDouble(fundsOut);
+				if (fundsOutMap.containsKey(transactionDetails)) {
+					fundsOutSum += fundsOutMap.get(transactionDetails).getFundsOut();
+				}
+			}
+
+			BankTransaction transaction = new BankTransaction(date, transactionDetails, fundsIn, fundsOutSum);
+			fundsOutMap.put(transactionDetails, transaction);
+		}
+
+		List<String> outputLines = new ArrayList<String>();
+		outputLines.add(header);
+		for (BankTransaction transaction : fundsOutMap.values()) {
+			outputLines.add(transaction.toString());
+		}
+
+		File outputFile = createOutputFile(inputFileName);
+		Files.write(outputFile.toPath(), outputLines);
 	}
 
 	private static File createOutputFile(String inputFileName) throws IOException {

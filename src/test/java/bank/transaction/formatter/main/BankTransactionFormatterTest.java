@@ -73,6 +73,17 @@ public class BankTransactionFormatterTest {
 		assertEquals(inputLines.get(2), outputLines.get(2));
 	}
 
+	@Test
+	public void bankTransactionFormatterShouldSummarizeTransactionsFromSameSource() throws IOException {
+		String[] args = new String[] { TEST_INPUT_FILE_NAME_2 };
+
+		BankTransactionFormatter.main(args);
+
+		List<String> outputLines = getLinesFromFileNamed(TEST_OUTPUT_FILE_NAME_2);
+
+		assertEquals("02/02/2016, Same Location,,236.00", outputLines.get(1));
+	}
+
 	private void deleteFileIfExists(String fileName) {
 		File file = new File(fileName);
 		if (file.exists()) {
