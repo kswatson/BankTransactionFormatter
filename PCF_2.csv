@@ -1,4 +1,6 @@
 Date, Transaction Details, Funds Out, Funds In 
-02/01/2016, Same Location,,225.50
-02/02/2016, Same Location,,10.50
+02/01/2016, Same Location Funds Out,225.50,
+02/02/2016, Same Location Funds Out,10.50,
 02/02/2016, Test funds out transaction,10.50,
+02/03/2016, Same Location Funds In,,225.50
+02/04/2016, Same Location Funds In,,10.50

@@ -29,15 +29,19 @@ public class BankTransactionFormatter {
 			String[] splitLine = line.split(",");
 			String date = splitLine[0].trim();
 			String transactionDetails = splitLine[1].trim();
-			String fundsIn = splitLine[2].trim();
+			String fundsOut = splitLine[2].trim();
+
+			double fundsInSum = 0;
+			if (splitLine.length == 4) {
+				fundsInSum = sumFundsIn(transactions, transactionDetails, splitLine[3].trim());
+			}
 
 			double fundsOutSum = 0;
-			if (splitLine.length == 4) {
-				String fundsOut = splitLine[3].trim();
+			if (!fundsOut.isEmpty()) {
 				fundsOutSum = sumFundsOut(transactions, transactionDetails, fundsOut);
 			}
 
-			BankTransaction transaction = new BankTransaction(date, transactionDetails, fundsIn, fundsOutSum);
+			BankTransaction transaction = new BankTransaction(date, transactionDetails, fundsOutSum, fundsInSum);
 			transactions.put(transactionDetails, transaction);
 		}
 
@@ -47,6 +51,15 @@ public class BankTransactionFormatter {
 			outputLines.add(transaction.toString());
 		}
 		return outputLines;
+	}
+
+	private static double sumFundsIn(Map<String, BankTransaction> transactions, String transactionDetails,
+			String fundsIn) {
+		double fundsInSum = Double.parseDouble(fundsIn);
+		if (transactions.containsKey(transactionDetails)) {
+			fundsInSum += transactions.get(transactionDetails).getFundsIn();
+		}
+		return fundsInSum;
 	}
 
 	private static double sumFundsOut(Map<String, BankTransaction> transactions, String transactionDetails,

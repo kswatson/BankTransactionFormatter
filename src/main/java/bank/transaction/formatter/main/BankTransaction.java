@@ -3,10 +3,10 @@ package bank.transaction.formatter.main;
 public class BankTransaction {
 	private String date;
 	private String transactionDetails;
-	private String fundsIn;
+	private double fundsIn;
 	private double fundsOut;
 
-	public BankTransaction(String date, String transactionDetails, String fundsIn, double fundsOut) {
+	public BankTransaction(String date, String transactionDetails, double fundsOut, double fundsIn) {
 		super();
 		this.date = date;
 		this.transactionDetails = transactionDetails;
@@ -18,12 +18,22 @@ public class BankTransaction {
 		return fundsOut;
 	}
 
+	public double getFundsIn() {
+		return fundsIn;
+	}
+
 	@Override
 	public String toString() {
+		String formattedFundsIn = String.format("%.2f", fundsIn);
+		if (formattedFundsIn.equals("0.00")) {
+			formattedFundsIn = "";
+		}
+
 		String formattedFundsOut = String.format("%.2f", fundsOut);
 		if (formattedFundsOut.equals("0.00")) {
 			formattedFundsOut = "";
 		}
-		return date + ", " + transactionDetails + "," + fundsIn + "," + formattedFundsOut;
+
+		return date + ", " + transactionDetails + "," + formattedFundsOut + "," + formattedFundsIn;
 	}
 }
