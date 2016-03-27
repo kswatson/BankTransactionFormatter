@@ -14,10 +14,17 @@ public class BankTransactionFormatter {
 		String inputFileName = args[0];
 		List<String> inputLines = getLinesFromFileNamed(inputFileName);
 
+		List<String> outputLines = buildOutputLines(inputLines);
+
+		File outputFile = createOutputFile(inputFileName);
+		Files.write(outputFile.toPath(), outputLines);
+	}
+
+	private static List<String> buildOutputLines(List<String> inputLines) {
 		String header = inputLines.get(0);
 		inputLines.remove(0);
 
-		Map<String, BankTransaction> fundsOutMap = new HashMap<String, BankTransaction>();
+		Map<String, BankTransaction> transactions = new HashMap<String, BankTransaction>();
 		for (String line : inputLines) {
 			String[] splitLine = line.split(",");
 			String date = splitLine[0].trim();
@@ -27,25 +34,28 @@ public class BankTransactionFormatter {
 			double fundsOutSum = 0;
 			if (splitLine.length == 4) {
 				String fundsOut = splitLine[3].trim();
-
-				fundsOutSum = Double.parseDouble(fundsOut);
-				if (fundsOutMap.containsKey(transactionDetails)) {
-					fundsOutSum += fundsOutMap.get(transactionDetails).getFundsOut();
-				}
+				fundsOutSum = sumFundsOut(transactions, transactionDetails, fundsOut);
 			}
 
 			BankTransaction transaction = new BankTransaction(date, transactionDetails, fundsIn, fundsOutSum);
-			fundsOutMap.put(transactionDetails, transaction);
+			transactions.put(transactionDetails, transaction);
 		}
 
 		List<String> outputLines = new ArrayList<String>();
 		outputLines.add(header);
-		for (BankTransaction transaction : fundsOutMap.values()) {
+		for (BankTransaction transaction : transactions.values()) {
 			outputLines.add(transaction.toString());
 		}
+		return outputLines;
+	}
 
-		File outputFile = createOutputFile(inputFileName);
-		Files.write(outputFile.toPath(), outputLines);
+	private static double sumFundsOut(Map<String, BankTransaction> transactions, String transactionDetails,
+			String fundsOut) {
+		double fundsOutSum = Double.parseDouble(fundsOut);
+		if (transactions.containsKey(transactionDetails)) {
+			fundsOutSum += transactions.get(transactionDetails).getFundsOut();
+		}
+		return fundsOutSum;
 	}
 
 	private static File createOutputFile(String inputFileName) throws IOException {
