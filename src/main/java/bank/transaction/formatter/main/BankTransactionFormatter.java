@@ -4,78 +4,43 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import bank.transaction.formatter.main.domain.PcfTransactionFile;
 import bank.transaction.formatter.main.transactions.PcfTransaction;
 
 public class BankTransactionFormatter {
 
 	public static void main(String[] args) throws IOException {
 		String inputFileName = args[0];
-		List<String> inputLines = getLinesFromFileNamed(inputFileName);
+		
+		PcfTransactionFile transactionFile = parsePcfTransactionCsv(inputFileName);
 
-		List<String> outputLines = buildOutputLines(inputLines);
+		List<String> outputLines = buildOutputLines(transactionFile);
 
 		File outputFile = createOutputFile(inputFileName);
 		Files.write(outputFile.toPath(), outputLines);
 	}
-
-	private static List<String> buildOutputLines(List<String> inputLines) {
+	
+	private static PcfTransactionFile parsePcfTransactionCsv(String fileName) throws IOException {
+		List<String> inputLines = getLinesFromFileNamed(fileName);
 		String header = inputLines.get(0);
 		inputLines.remove(0);
 
-		Map<String, PcfTransaction> transactions = summarizeTransactions(inputLines);
+		return new PcfTransactionFile(header, inputLines);		
+	}
+
+	private static List<String> buildOutputLines(PcfTransactionFile transactionFile) {
+
+		Map<String, PcfTransaction> transactions = transactionFile.summarizeTransactions();
 
 		List<String> outputLines = new ArrayList<String>();
-		outputLines.add(header);
+		outputLines.add(transactionFile.getHeader());
 		for (PcfTransaction transaction : transactions.values()) {
 			outputLines.add(transaction.toString());
 		}
 		return outputLines;
-	}
-
-	private static Map<String, PcfTransaction> summarizeTransactions(List<String> inputLines) {
-		Map<String, PcfTransaction> transactions = new HashMap<String, PcfTransaction>();
-		for (String line : inputLines) {
-			String[] splitLine = line.split(",");
-			String date = splitLine[0].trim();
-			String transactionDetails = splitLine[1].trim();
-			String fundsOut = splitLine[2].trim();
-
-			double fundsInSum = 0;
-			if (splitLine.length == 4) {
-				fundsInSum = sumFundsIn(transactions, transactionDetails, splitLine[3].trim());
-			}
-
-			double fundsOutSum = 0;
-			if (!fundsOut.isEmpty()) {
-				fundsOutSum = sumFundsOut(transactions, transactionDetails, fundsOut);
-			}
-
-			PcfTransaction transaction = new PcfTransaction(date, transactionDetails, fundsOutSum, fundsInSum);
-			transactions.put(transactionDetails, transaction);
-		}
-		return transactions;
-	}
-
-	private static double sumFundsIn(Map<String, PcfTransaction> transactions, String transactionDetails,
-			String fundsIn) {
-		double fundsInSum = Double.parseDouble(fundsIn);
-		if (transactions.containsKey(transactionDetails)) {
-			fundsInSum += transactions.get(transactionDetails).getFundsIn();
-		}
-		return fundsInSum;
-	}
-
-	private static double sumFundsOut(Map<String, PcfTransaction> transactions, String transactionDetails,
-			String fundsOut) {
-		double fundsOutSum = Double.parseDouble(fundsOut);
-		if (transactions.containsKey(transactionDetails)) {
-			fundsOutSum += transactions.get(transactionDetails).getFundsOut();
-		}
-		return fundsOutSum;
 	}
 
 	private static File createOutputFile(String inputFileName) throws IOException {
