@@ -21,6 +21,10 @@ public class PcfTransactionFile {
 		return header;
 	}
 	
+	public List<String> getTransactions() {
+		return transactions;
+	}
+	
 	public Map<String, PcfTransaction> summarizeTransactions() {
 		Map<String, PcfTransaction> transactions = new HashMap<String, PcfTransaction>();
 		for (String line : this.transactions) {

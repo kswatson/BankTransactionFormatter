@@ -12,6 +12,14 @@ import bank.transaction.formatter.main.transactions.PcfTransaction;
 
 public class PcfTransactionCsvParser {
 
+	public static PcfTransactionFile parsePcfTransactionCsv(String fileName) throws IOException {
+		List<String> inputLines = getLinesFromFileNamed(fileName);
+		String header = inputLines.get(0).trim();
+		inputLines.remove(0);
+
+		return new PcfTransactionFile(header, inputLines);		
+	}
+	
 	public static List<String> buildOutputLines(PcfTransactionFile transactionFile) {
 
 		Map<String, PcfTransaction> transactions = transactionFile.summarizeTransactions();
@@ -23,15 +31,7 @@ public class PcfTransactionCsvParser {
 		}
 		return outputLines;
 	}
-	
-	public static PcfTransactionFile parsePcfTransactionCsv(String fileName) throws IOException {
-		List<String> inputLines = getLinesFromFileNamed(fileName);
-		String header = inputLines.get(0);
-		inputLines.remove(0);
 
-		return new PcfTransactionFile(header, inputLines);		
-	}
-	
 	private static List<String> getLinesFromFileNamed(String fileName) throws IOException {
 		File file = new File(fileName);
 		List<String> lines = Files.readAllLines(file.toPath());
