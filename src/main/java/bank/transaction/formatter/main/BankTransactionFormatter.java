@@ -26,6 +26,17 @@ public class BankTransactionFormatter {
 		String header = inputLines.get(0);
 		inputLines.remove(0);
 
+		Map<String, PcfTransaction> transactions = summarizeTransactions(inputLines);
+
+		List<String> outputLines = new ArrayList<String>();
+		outputLines.add(header);
+		for (PcfTransaction transaction : transactions.values()) {
+			outputLines.add(transaction.toString());
+		}
+		return outputLines;
+	}
+
+	private static Map<String, PcfTransaction> summarizeTransactions(List<String> inputLines) {
 		Map<String, PcfTransaction> transactions = new HashMap<String, PcfTransaction>();
 		for (String line : inputLines) {
 			String[] splitLine = line.split(",");
@@ -46,13 +57,7 @@ public class BankTransactionFormatter {
 			PcfTransaction transaction = new PcfTransaction(date, transactionDetails, fundsOutSum, fundsInSum);
 			transactions.put(transactionDetails, transaction);
 		}
-
-		List<String> outputLines = new ArrayList<String>();
-		outputLines.add(header);
-		for (PcfTransaction transaction : transactions.values()) {
-			outputLines.add(transaction.toString());
-		}
-		return outputLines;
+		return transactions;
 	}
 
 	private static double sumFundsIn(Map<String, PcfTransaction> transactions, String transactionDetails,
