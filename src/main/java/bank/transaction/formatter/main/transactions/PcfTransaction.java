@@ -1,12 +1,12 @@
-package bank.transaction.formatter.main;
+package bank.transaction.formatter.main.transactions;
 
-public class BankTransaction {
+public class PcfTransaction {
 	private String date;
 	private String transactionDetails;
 	private double fundsIn;
 	private double fundsOut;
 
-	public BankTransaction(String date, String transactionDetails, double fundsOut, double fundsIn) {
+	public PcfTransaction(String date, String transactionDetails, double fundsOut, double fundsIn) {
 		super();
 		this.date = date;
 		this.transactionDetails = transactionDetails;
