@@ -22,6 +22,14 @@ public class PcfTransaction {
 		return fundsIn;
 	}
 
+	public String getTransactionDetails() {
+		return transactionDetails;
+	}
+
+	public String getDate() {
+		return date;
+	}
+
 	@Override
 	public String toString() {
 		String formattedFundsIn = String.format("%.2f", fundsIn);

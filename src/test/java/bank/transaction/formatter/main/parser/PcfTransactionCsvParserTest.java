@@ -27,7 +27,7 @@ public class PcfTransactionCsvParserTest {
 		
 		assertNotNull(actual);
 		assertEquals(expectedHeader, actual.getHeader());
-		assertEquals(expectedTransactions, actual.getTransactions());
+		assertExpectedListEqualsTransactionList(expectedTransactions, actual);
 	}
 
 	@Test
@@ -60,5 +60,15 @@ public class PcfTransactionCsvParserTest {
 		expectedTransactions.add(TEST_TRANSACTION_1);
 		expectedTransactions.add(TEST_TRANSACTION_2);
 		return expectedTransactions;
+	}
+	
+	private void assertExpectedListEqualsTransactionList(List<String> expectedTransactions, PcfTransactionFile actual) {
+		assertEquals(expectedTransactions.size(), actual.getTransactions().size());
+		for(int i = 0; i < expectedTransactions.size(); i++) {
+			String expectedTransaction = expectedTransactions.get(i);
+			String actualTransaction = actual.getTransactions().get(i).toString();
+			
+			assertEquals(expectedTransaction, actualTransaction);
+		}
 	}
 }

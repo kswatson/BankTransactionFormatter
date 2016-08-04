@@ -55,9 +55,10 @@ public class BankTransactionFormatterTest {
 		BankTransactionFormatter.main(args);
 
 		String expectedHeader = getLinesFromFileNamed(TEST_PC_FINANCIAL_INPUT_FILE_NAME).get(0);
+
 		String actualHeader = getLinesFromFileNamed(TEST_PC_FINANCIAL_OUTPUT_FILE_NAME).get(0);
 
-		assertEquals(expectedHeader, actualHeader);
+		assertEquals(expectedHeader.trim(), actualHeader);
 	}
 
 	@Test

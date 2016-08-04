@@ -1,5 +1,6 @@
 package bank.transaction.formatter.main.domain;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,57 +11,69 @@ public class PcfTransactionFile {
 
 	String header;
 	
-	List<String> transactions;
+	List<PcfTransaction> transactions;
 	
 	public PcfTransactionFile(String header, List<String> transactions) {
 		this.header = header;
-		this.transactions =  transactions;
+
+		this.transactions = new ArrayList<PcfTransaction>();
+		for(String line : transactions) {
+			String[] splitLine = line.split(",");
+			String date = splitLine[0].trim();
+			String transactionDetails = splitLine[1].trim();
+
+			double fundsOut = 0;
+			if(!splitLine[2].trim().isEmpty()) {
+				fundsOut = Double.parseDouble(splitLine[2].trim());
+			}
+
+			double fundsIn = 0;
+			if(splitLine.length == 4) {
+				fundsIn = Double.parseDouble(splitLine[3].trim());
+			}
+
+			PcfTransaction tran = new PcfTransaction(date, transactionDetails, fundsOut, fundsIn);
+			this.transactions.add(tran);
+		}
 	}
 	
 	public String getHeader() {
 		return header;
 	}
 	
-	public List<String> getTransactions() {
+	public List<PcfTransaction> getTransactions() {
 		return transactions;
 	}
 	
 	public Map<String, PcfTransaction> summarizeTransactions() {
-		Map<String, PcfTransaction> transactions = new HashMap<String, PcfTransaction>();
-		for (String line : this.transactions) {
-			String[] splitLine = line.split(",");
-			String date = splitLine[0].trim();
-			String transactionDetails = splitLine[1].trim();
-			String fundsOut = splitLine[2].trim();
+		Map<String, PcfTransaction> summedTransactions = new HashMap<String, PcfTransaction>();
 
-			double fundsInSum = 0;
-			if (splitLine.length == 4) {
-				fundsInSum = sumFundsIn(transactions, transactionDetails, splitLine[3].trim());
-			}
+		for(PcfTransaction transaction : transactions) {
 
-			double fundsOutSum = 0;
-			if (!fundsOut.isEmpty()) {
-				fundsOutSum = sumFundsOut(transactions, transactionDetails, fundsOut);
-			}
+			double fundsInSum = sumFundsIn(summedTransactions, transaction);
 
-			PcfTransaction transaction = new PcfTransaction(date, transactionDetails, fundsOutSum, fundsInSum);
-			transactions.put(transactionDetails, transaction);
+			double fundsOutSum = sumFundsOut(summedTransactions, transaction);
+
+			PcfTransaction summedTransaction = new PcfTransaction(transaction.getDate(), transaction.getTransactionDetails(), fundsOutSum, fundsInSum);
+			summedTransactions.put(summedTransaction.getTransactionDetails(), summedTransaction);
 		}
-		return transactions;
+
+		return summedTransactions;
 	}
 	
-	private double sumFundsIn(Map<String, PcfTransaction> transactions, String transactionDetails,
-			String fundsIn) {
-		double fundsInSum = Double.parseDouble(fundsIn);
+	private double sumFundsIn(Map<String, PcfTransaction> transactions, PcfTransaction transaction) {
+		String transactionDetails = transaction.getTransactionDetails();
+		double fundsInSum = transaction.getFundsIn();
+
 		if (transactions.containsKey(transactionDetails)) {
 			fundsInSum += transactions.get(transactionDetails).getFundsIn();
 		}
 		return fundsInSum;
 	}
 	
-	private double sumFundsOut(Map<String, PcfTransaction> transactions, String transactionDetails,
-			String fundsOut) {
-		double fundsOutSum = Double.parseDouble(fundsOut);
+	private double sumFundsOut(Map<String, PcfTransaction> transactions, PcfTransaction transaction) {
+		String transactionDetails = transaction.getTransactionDetails();
+		double fundsOutSum = transaction.getFundsOut();
 		if (transactions.containsKey(transactionDetails)) {
 			fundsOutSum += transactions.get(transactionDetails).getFundsOut();
 		}
